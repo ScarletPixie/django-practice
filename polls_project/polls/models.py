@@ -17,8 +17,13 @@ class Question(models.Model):
 
 class Choice(models.Model):
 	question = models.ForeignKey(Question, on_delete=models.CASCADE)
-	choice = models.CharField(max_length=100, null=False, unique=True)
+	choice = models.CharField(max_length=100, null=False)
 	votes = models.IntegerField(default=0)
 
 	def __str__(self):
 		return self.choice
+
+	class Meta:
+		constraints = [
+			models.UniqueConstraint(fields=['question', 'choice'], name='unique_choice_per_question'),
+		];

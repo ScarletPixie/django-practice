@@ -20,6 +20,9 @@ class DetailView(generic.DetailView):
 	model = Question
 	template_name = 'polls/detail.html'
 
+	def get_queryset(self):
+		return Question.objects.filter(pub__lte=timezone.now())
+
 def results(request, pk):
 	question = get_object_or_404(Question, pk=pk)
 	return render(request, 'polls/results.html', {'question':question})
