@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.db.models import F
 from django.views import generic
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from .models import Question, Choice
 
 # Create your views here.
@@ -12,7 +13,8 @@ class IndexView(generic.ListView):
 	template_name = 'polls/index.html'
 
 	def get_queryset(self):
-		return Question.objects.order_by('-pub')[:5]
+		now = timezone.now()
+		return Question.objects.filter(pub__lte=now).order_by('-pub')[:5]
 
 class DetailView(generic.DetailView):
 	model = Question
