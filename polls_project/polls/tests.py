@@ -81,3 +81,17 @@ class QuestionIndexViewTests(TestCase):
                 self.assertNotContains(response, f"dummy question {i}")
 
         self.assertQuerySetEqual(response.context['question_list'], questions[:5])
+
+class QuestionDetailViewTests(TestCase):
+    def test_with_no_valid_question(self):
+        future_question = create_question('dummy question', 10)
+        response = self.client.get(reverse('polls:detail', kwargs={'pk':future_question.pk}))
+        self.assertEqual(response.status_code, 404)
+
+    def test_with_valid_question(self):
+        question = create_question('dummy question', -10)
+        response = self.client.get(reverse('polls:detail', kwargs={'pk':question.pk}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'dummy question')
+        self.assertEqual(response.context['question'], question) 
+
