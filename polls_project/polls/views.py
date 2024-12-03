@@ -28,7 +28,7 @@ def results(request, pk):
 	return render(request, 'polls/results.html', {'question':question})
 
 def vote(request, pk):
-	question = get_object_or_404(Question, pk=pk)
+	question = get_object_or_404(Question, pk=pk, pub__lte=timezone.now())
 	
 	try:
 		selected_choice = question.choice_set.get(pk=request.POST['choice'])

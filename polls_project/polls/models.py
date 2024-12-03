@@ -26,4 +26,4 @@ class Choice(models.Model):
 	class Meta:
 		constraints = [
 			models.UniqueConstraint(fields=['question', 'choice'], name='unique_choice_per_question'),
-		];
+		]
