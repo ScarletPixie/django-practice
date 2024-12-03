@@ -1,0 +1,15 @@
+<form action="{% url 'polls:vote' question.pk %}" method="post">
+	{% csrf_token %}
+	<fieldset>
+		<legend>{{ question.question }}</legend>
+		{% for choice in question.choice_set.all %}
+			<input type="radio" name="choice" id="choice{{ choice.pk }}" value="{{ choice.pk }}">
+			<label for="choice{{ choice.pk }}">{{ choice.choice }}</label>
+		{% endfor %}
+	</fieldset>
+	<button type="submit" value="submit">submit</button>
+	{% if error_message %}
+	<p>{{ error_message }}</p>
+	{% endif %}
+</form>
+<a href="{% url 'polls:index' %}">back to homepage</a>

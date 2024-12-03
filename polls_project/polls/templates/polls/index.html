@@ -1,0 +1,11 @@
+<h1>Polls App</h1>
+{% load static %}
+<link rel="stylesheet" href="{% static 'polls/css/style.css' %}">
+
+{% if question_list %}
+	{% for question in question_list %}
+	<a href="{% url 'polls:detail' question.pk %}">{{ question.question }}</a>
+	{% endfor %}
+{% else %}
+	<p>No polls available</p>
+{% endif %}

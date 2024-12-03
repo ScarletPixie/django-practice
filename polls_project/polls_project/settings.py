@@ -13,15 +13,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 import pymysql
 from pathlib import Path
-from dotenv import load_dotenv
+from decouple import config
 
 # use PyMysql as mysql client
 pymysql.install_as_MySQLdb()
-# load environment
-env_path = Path(__file__).resolve().parent.parent / '.env'
-load_dotenv(dotenv_path=env_path)
-
-from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,10 +25,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+SECRET_KEY = config('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DJANGO_DEBUG', default=False, cast=bool)
+TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = []
 
@@ -41,6 +37,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+	'polls.apps.PollsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -86,11 +83,11 @@ WSGI_APPLICATION = 'polls_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('MYSQL_DATABASE'),
-		'USER': os.environ.get('MYSQL_USER'),
-		'PASSWORD': os.environ.get('MYSQL_PASSWORD'),
-		'HOST': '127.0.0.1',
-		'PORT': 3306,
+        'NAME': config('MYSQL_DATABASE'),
+		'USER': config('MYSQL_USER'),
+		'PASSWORD': config('MYSQL_PASSWORD'),
+		'HOST': config('DJANGO_DB_HOST', default='localhost'),
+		'PORT': config('DJANGO_DB_PORT', default=3306, cast=int),
     }
 }
 
@@ -119,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
