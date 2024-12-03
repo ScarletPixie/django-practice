@@ -18,11 +18,6 @@ jobs:
         with:
           python-version: '3.10.12'
 
-      - name: install docker compose
-        uses: hoverkraft-tech/compose-action@v2.0.1
-        with:
-            compose-file: "./polls_project/docker-compose.yml"
-
       - name: create .env file
         run: |
           cd polls_project
@@ -38,6 +33,13 @@ jobs:
           MYSQL_DATABASE=polls_db
           EOF
 
+          cat .env
+
+      - name: install docker compose
+        uses: hoverkraft-tech/compose-action@v2.0.1
+        with:
+            compose-file: "./polls_project/docker-compose.yaml"
+
       - name: install dependencies
         run: |
           pip install -r polls_project/requirements.txt
@@ -49,13 +51,9 @@ jobs:
 
       - name: migrate database
         run: |
+          sleep 10
           cd polls_project
           python3 manage.py migrate
-
-      - name: start django dev server
-        run: |
-          cd polls_project
-          python3 manage.py runserver
 
       - name: run tests
         run: |
