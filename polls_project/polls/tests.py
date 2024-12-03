@@ -82,6 +82,7 @@ class QuestionIndexViewTests(TestCase):
 
         self.assertQuerySetEqual(response.context['question_list'], questions[:5])
 
+
 class QuestionDetailViewTests(TestCase):
     def test_with_no_valid_question(self):
         future_question = create_question('dummy question', 10)
@@ -93,5 +94,41 @@ class QuestionDetailViewTests(TestCase):
         response = self.client.get(reverse('polls:detail', kwargs={'pk':question.pk}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'dummy question')
-        self.assertEqual(response.context['question'], question) 
+        self.assertEqual(response.context['question'], question)
+    
+    def test_with_invalid_question_id(self):
+        response = self.client.get(reverse('polls:detail', kwargs={'pk':10000000000}))
+        self.assertEqual(response.status_code, 404)
 
+
+class QuestionResultsViewTests(TestCase):
+    future = 10
+    past = -10
+    dummy_text = 'dummy question'
+    def get_url(self, pk: int):
+        return reverse('polls:results', kwargs={'pk':pk})
+
+    def test_with_no_questions(self):
+        """
+        Should return 404 on any id given with no questions
+        """
+        response = self.client.get(self.get_url(0))
+        self.assertEqual(response.status_code, 404)
+
+    def test_with_valid_question(self):
+        """
+        Should return 200 and display the question
+        """
+        question = create_question(self.dummy_text, self.past)
+        response = self.client.get(self.get_url(question.pk))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.dummy_text)
+        self.assertEqual(response.context['question'], question)
+
+    def test_with_future_question(self):
+        """
+        Should return 404 on a future question
+        """
+        question = create_question(self.dummy_text, self.future)
+        response = self.client.get(self.get_url(question.pk))
+        self.assertEqual(response.status_code, 404)

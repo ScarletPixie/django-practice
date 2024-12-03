@@ -24,7 +24,7 @@ class DetailView(generic.DetailView):
 		return Question.objects.filter(pub__lte=timezone.now())
 
 def results(request, pk):
-	question = get_object_or_404(Question, pk=pk)
+	question = get_object_or_404(Question, pk=pk, pub__lte=timezone.now())
 	return render(request, 'polls/results.html', {'question':question})
 
 def vote(request, pk):
